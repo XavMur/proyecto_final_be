@@ -20,7 +20,7 @@ const productosPorCategoria = async (categorias) =>{
     const consulta = format(query, categoriasID, categoriasID, categoriasID);
     try{
         const {rows} = await conn.createConn().query(consulta);
-        console.log(rows)
+        console.log("PETICION DE PRODUCTOS")
         return rows
     } catch(error){
         throw{"code": 404, "message": "Error al obtener los productos"};
