@@ -2,7 +2,7 @@ const format = require("pg-format");
 const {dbConnection} = require('./db_connection.js')
 const conn = dbConnection()
 
-const getCategorias = async (categorias) =>{
+const getCategoriasParam = async (categorias) =>{
     consulta = "SELECT * FROM categorias";
     try{
         const {rows} = await conn.createConn().query(consulta);
@@ -16,7 +16,7 @@ const getCategorias = async (categorias) =>{
 const productosPorCategoria = async (categorias) =>{
     const query = "SELECT * FROM productos WHERE categoria1 = ANY(ARRAY[%s]) \
     OR categoria2 = ANY(ARRAY[%s]) OR categoria3 = ANY(ARRAY[%s])";
-    const categoriasID = await getCategorias(categorias);
+    const categoriasID = await getCategoriasParam(categorias);
     const consulta = format(query, categoriasID, categoriasID, categoriasID);
     try{
         const {rows} = await conn.createConn().query(consulta);
@@ -28,4 +28,14 @@ const productosPorCategoria = async (categorias) =>{
 }
 
 
-module.exports = {productosPorCategoria}
+const getCategorias = async () =>{
+    const query = "SELECT * FROM categorias";
+    try{
+        const {rows} = await conn.createConn().query(query);
+        return rows;
+    }catch{
+        throw{"code": 404, "message": "Error al obtener las categorias"};
+    }
+}
+
+module.exports = {productosPorCategoria, getCategorias}
