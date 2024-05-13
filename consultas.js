@@ -32,10 +32,33 @@ const getCategorias = async () =>{
     const query = "SELECT * FROM categorias";
     try{
         const {rows} = await conn.createConn().query(query);
+        console.log("PETICION DE CATEGORIAS")
         return rows;
     }catch{
         throw{"code": 404, "message": "Error al obtener las categorias"};
     }
 }
 
-module.exports = {productosPorCategoria, getCategorias}
+const getTendencias = async () =>{
+    const queryTend = "SELECT catTendencia FROM tendencias";
+    let tendencias;
+    try{
+        const {rows} = await conn.createConn().query(queryTend);
+        tendencias = rows;
+    }catch{
+        throw{"code": 404, "message": "Error al obtener las tendencias"};
+    }
+    const queryCatTend = "SELECT * FROM categorias WHERE id = ANY(ARRAY[%s]);"
+    const tendenciaId = tendencias.map(tendencia => tendencia.cattendencia);
+    const query = format(queryCatTend, tendenciaId);
+    
+    try{
+        const {rows} = await conn.createConn().query(query);
+        console.log("PETICION DE TENDENCIAS")
+        return rows;
+    }catch{
+        throw{"code": 404, "message": "Error al obtener las tendencias"};
+    }
+}
+
+module.exports = {productosPorCategoria, getCategorias, getTendencias}
