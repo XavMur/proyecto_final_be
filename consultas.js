@@ -14,10 +14,18 @@ const getCategoriasParam = async (categorias) =>{
 }
 
 const productosPorCategoria = async (categorias) =>{
-    const query = "SELECT * FROM productos WHERE categoria1 = ANY(ARRAY[%s]) \
-    OR categoria2 = ANY(ARRAY[%s]) OR categoria3 = ANY(ARRAY[%s])";
-    const categoriasID = await getCategoriasParam(categorias);
-    const consulta = format(query, categoriasID, categoriasID, categoriasID);
+    let consulta;
+    if(categorias == "*")
+        {
+            consulta = "SELECT * FROM productos ORDER BY id";
+        }
+    else{
+        const query = "SELECT * FROM productos WHERE categoria1 = ANY(ARRAY[%s]) \
+        OR categoria2 = ANY(ARRAY[%s]) OR categoria3 = ANY(ARRAY[%s])";
+        const categoriasID = await getCategoriasParam(categorias);
+        consulta = format(query, categoriasID, categoriasID, categoriasID);
+    }
+
     try{
         const {rows} = await conn.createConn().query(consulta);
         console.log("PETICION DE PRODUCTOS")
@@ -61,4 +69,15 @@ const getTendencias = async () =>{
     }
 }
 
-module.exports = {productosPorCategoria, getCategorias, getTendencias}
+const getProduct = async (id) =>{
+    const consulta = `SELECT * FROM productos WHERE id = ${id}`;
+    try{
+        const {rows} = await conn.createConn().query(consulta);
+        console.log("PETICION DE Producto")
+        return rows;
+    }catch{
+        throw{"code": 404, "message": "Error al obtener el producto"};
+    }
+}
+
+module.exports = {productosPorCategoria, getCategorias, getTendencias, getProduct}
