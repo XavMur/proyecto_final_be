@@ -3,7 +3,7 @@ const app = express()
 const cors = require('cors')
 
 
-const {productosPorCategoria, getCategorias} = require('./consultas.js')
+const {productosPorCategoria, getCategorias, getTendencias} = require('./consultas.js')
 
 app.listen(3000, console.log("Servidor funcionando"))
 app.use(cors())
@@ -18,4 +18,9 @@ app.get('/productos', async(req, res)=>{
 app.get('/categorias', async(req, res) =>{
     const categorias = await getCategorias();
     res.json(categorias)
+})
+
+app.get('/tendencias', async(req,res)=>{
+    const tendencias = await getTendencias();
+    res.json(tendencias)
 })
