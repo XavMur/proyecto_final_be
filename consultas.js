@@ -2,7 +2,7 @@ const format = require("pg-format");
 const { dbConnection } = require("./db_connection.js");
 const conn = dbConnection();
 
-const getCategorias = async (categorias) => {
+const getCategoriasParam = async (categorias) => {
   consulta = "SELECT * FROM categorias";
   try {
     const { rows } = await conn.createConn().query(consulta);
@@ -16,11 +16,17 @@ const getCategorias = async (categorias) => {
 };
 
 const productosPorCategoria = async (categorias) => {
-  const query =
-    "SELECT * FROM productos WHERE categoria1 = ANY(ARRAY[%s]) \
-    OR categoria2 = ANY(ARRAY[%s]) OR categoria3 = ANY(ARRAY[%s])";
-  const categoriasID = await getCategorias(categorias);
-  const consulta = format(query, categoriasID, categoriasID, categoriasID);
+  let consulta;
+  if (categorias == "*") {
+    consulta = "SELECT * FROM productos ORDER BY id";
+  } else {
+    const query =
+      "SELECT * FROM productos WHERE categoria1 = ANY(ARRAY[%s]) \
+        OR categoria2 = ANY(ARRAY[%s]) OR categoria3 = ANY(ARRAY[%s])";
+    const categoriasID = await getCategoriasParam(categorias);
+    consulta = format(query, categoriasID, categoriasID, categoriasID);
+  }
+
   try {
     const { rows } = await conn.createConn().query(consulta);
     console.log("PETICION DE PRODUCTOS");
@@ -30,4 +36,53 @@ const productosPorCategoria = async (categorias) => {
   }
 };
 
-module.exports = { productosPorCategoria };
+const getCategorias = async () => {
+  const query = "SELECT * FROM categorias";
+  try {
+    const { rows } = await conn.createConn().query(query);
+    console.log("PETICION DE CATEGORIAS");
+    return rows;
+  } catch {
+    throw { code: 404, message: "Error al obtener las categorias" };
+  }
+};
+
+const getTendencias = async () => {
+  const queryTend = "SELECT catTendencia FROM tendencias";
+  let tendencias;
+  try {
+    const { rows } = await conn.createConn().query(queryTend);
+    tendencias = rows;
+  } catch {
+    throw { code: 404, message: "Error al obtener las tendencias" };
+  }
+  const queryCatTend = "SELECT * FROM categorias WHERE id = ANY(ARRAY[%s]);";
+  const tendenciaId = tendencias.map((tendencia) => tendencia.cattendencia);
+  const query = format(queryCatTend, tendenciaId);
+
+  try {
+    const { rows } = await conn.createConn().query(query);
+    console.log("PETICION DE TENDENCIAS");
+    return rows;
+  } catch {
+    throw { code: 404, message: "Error al obtener las tendencias" };
+  }
+};
+
+const getProduct = async (id) => {
+  const consulta = `SELECT * FROM productos WHERE id = ${id}`;
+  try {
+    const { rows } = await conn.createConn().query(consulta);
+    console.log("PETICION DE Producto");
+    return rows;
+  } catch {
+    throw { code: 404, message: "Error al obtener el producto" };
+  }
+};
+
+module.exports = {
+  productosPorCategoria,
+  getCategorias,
+  getTendencias,
+  getProduct,
+};
