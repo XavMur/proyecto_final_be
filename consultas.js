@@ -80,4 +80,55 @@ const getProduct = async (id) =>{
     }
 }
 
-module.exports = {productosPorCategoria, getCategorias, getTendencias, getProduct}
+const getId = async (tableName) =>{
+    const consulta = `SELECT MAX(id) FROM ${tableName};`;
+    try{
+        const { rows } = await conn.createConn().query(consulta);
+        return rows;
+    }catch (error) {
+        console.error("Error getting ID:", error);
+        throw { code: 404, message: "Error al obtener el id" };
+    }
+}
+
+const addUser = async (user) => {
+    let consulta;
+    let values;
+    maxId = await getId('usuarios');
+    if (user.password) {
+        consulta = 'INSERT INTO usuarios(id,usuario, email, pass) VALUES ($1, $2, $3, $4);';
+        values = [maxId[0].max + 1, user.usuario, user.email, user.password];
+    } else {
+        consulta = 'INSERT INTO usuarios(id,usuario, email) VALUES ($1, $2, $3);';
+        values = [maxId[0].max + 1, user.usuario, user.email];
+    }
+
+    try {
+        await conn.createConn().query(consulta, values);
+        console.log("AGREGADO DE USUARIO");
+        return "Usuario verificado, Usuario agregado";
+    } catch (error) {
+        console.error("Error adding user:", error);
+        throw { code: 404, message: "Error al agregar el usuario" };
+    }
+};
+
+const verifyUser = async (user) => {
+    const consulta = 'SELECT * FROM usuarios WHERE email = $1;';
+    let resultado;
+    try {
+      const { rows } = await conn.createConn().query(consulta, [user.email]);
+      console.log("REVISION DE USUARIO");
+      if (rows.length == 0){
+        resultado = await addUser(user);
+      }else{
+        resultado = "Usuario verificado";
+      }
+      return resultado;
+    } catch (error) {
+      console.error('Error:', error);
+      throw { code: 404, message: "Error al verificar el usuario" };
+    }
+  };
+
+module.exports = {productosPorCategoria, getCategorias, getTendencias, getProduct, verifyUser}
