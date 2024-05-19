@@ -80,9 +80,31 @@ const getProduct = async (id) => {
   }
 };
 
+const updateProfile = async (datos, userId) => {
+  const consulta = `
+    UPDATE Usuarios
+    SET 
+      usuario = ${datos.name},
+      pais = ${datos.country},
+      ciudad = ${datos.city},
+      telefono = ${datos.phone},
+      email = ${datos.email},
+      nacimiento = ${datos.birthDate},
+      direccion = ${datos.address}
+    WHERE id = ${userId}`;
+
+  try {
+    const result = await db.query(consulta);
+    console.log("Profile updated successfully:", result);
+  } catch (error) {
+    console.error("Error updating profile:", error);
+  }
+};
+
 module.exports = {
   productosPorCategoria,
   getCategorias,
   getTendencias,
   getProduct,
+  updateProfile,
 };
