@@ -2,15 +2,16 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 
-app.listen(3000, console.log("Servidor funcionando"));
-app.use(cors());
 const {
   productosPorCategoria,
   getCategorias,
   getTendencias,
   getProduct,
-  updateProfile,
+  verifyUser,
 } = require("./consultas.js");
+
+app.listen(3000, console.log("Servidor funcionando"));
+app.use(cors());
 
 app.get("/productos", async (req, res) => {
   const categorias = req.query.categoria;
@@ -32,6 +33,13 @@ app.get("/producto", async (req, res) => {
   const prodId = req.query.id;
   const producto = await getProduct(prodId);
   res.json(producto);
+});
+
+app.use(express.json());
+app.post("/usuarios", async (req, res) => {
+  const usuario = req.body;
+  const verificacion = await verifyUser(usuario);
+  res.json(verificacion);
 });
 
 app.post("/profile", async (req, res) => {
