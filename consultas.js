@@ -131,4 +131,25 @@ const verifyUser = async (user) => {
     }
   };
 
-module.exports = {productosPorCategoria, getCategorias, getTendencias, getProduct, verifyUser}
+  const addUser2ndlogin = async(user) =>{
+    const consulta = "SELECT * FROM usuarios WHERE email = $1;";
+    try{
+        const { rows } = await conn.createConn().query(consulta, [user.email]);
+        console.log("REVISION DE USUARIO");
+        if( rows.length > 0){
+            if(user.password == rows[0].pass)
+                {
+                    return rows;
+                }else{
+                    return "Correo no valido";
+                }
+        }else{
+            return "No existe";
+        }
+    }catch (error) {
+        console.error('Error:', error);
+        throw { code: 404, message: "Error al verificar el usuario" };
+      }
+  }
+
+module.exports = {productosPorCategoria, getCategorias, getTendencias, getProduct, verifyUser,addUser2ndlogin}

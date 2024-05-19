@@ -1,9 +1,10 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const jwt = require('jsonwebtoken')
 
 
-const {productosPorCategoria, getCategorias, getTendencias, getProduct, verifyUser} = require('./consultas.js')
+const {productosPorCategoria, getCategorias, getTendencias, getProduct, verifyUser, addUser2ndlogin} = require('./consultas.js')
 
 app.listen(3000, console.log("Servidor funcionando"))
 app.use(cors())
@@ -36,4 +37,14 @@ app.post('/usuarios', async(req, res)=>{
     const usuario = req.body;
     const verificacion = await verifyUser(usuario);
     res.json(verificacion);
+})
+
+app.post('/usuarioLogin2', async(req, res) =>{
+    const emailVerificacion = req.body;
+    const verificacion = await addUser2ndlogin(emailVerificacion);
+    const token = jwt.sign(emailVerificacion.email,"az_AZ");
+    res.json({
+        verificacion: verificacion,
+        token: token
+    });
 })
