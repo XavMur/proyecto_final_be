@@ -14,7 +14,7 @@ function dbConnection (){
     const connDataLocal = {
         host: "localhost",
         user: "postgres",
-        password: "postgre",
+        password: "pgadmin",
         database: "proyecto_final",
         allowExitOnIdle: true,
     }

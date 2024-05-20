@@ -162,7 +162,7 @@ const addProduct = async (product) => {
   let values;
   maxId = await getId("productos");
     consulta =
-      "INSERT INTO productos(id,nombreproducto, descripcion, imagenproducto, precio, categoria1, categoria2, categoria3, stock) VALUES ($1, $2, $3, $4, $5,$6,$7,$8,$9);";
+      "INSERT INTO productos(id,nombreproducto, descripcion, imagenproducto, precio, categoria1, categoria2, categoria3, stock, shipmentdetails) VALUES ($1, $2, $3, $4, $5,$6,$7,$8,$9,$10);";
     values = [maxId[0].max + 1,
               product.nombreproducto,
               product.descripcion,
@@ -171,7 +171,8 @@ const addProduct = async (product) => {
               product.categoria1,
               product.categoria2,
               product.categoria3,
-              product.stock
+              product.stock,
+              product.shipmentdetails
             ];
   try {
     await conn.createConn().query(consulta, values);
