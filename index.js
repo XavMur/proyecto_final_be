@@ -3,6 +3,7 @@ const app = express()
 const cors = require('cors')
 const jwt = require('jsonwebtoken')
 
+
 const {
     productosPorCategoria, 
     getCategorias, 

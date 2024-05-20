@@ -1,6 +1,13 @@
 const format = require("pg-format");
 const { dbConnection } = require("./db_connection.js");
+const bcrypt = require('bcrypt');
 const conn = dbConnection();
+const saltRounds = 10;
+
+async function hashPassword(plainTextPassword) {
+    const hashedPassword = await bcrypt.hash(plainTextPassword, saltRounds);
+    return hashedPassword;
+}
 
 const getCategoriasParam = async (categorias) => {
   consulta = "SELECT * FROM categorias";
@@ -133,7 +140,8 @@ const addUser = async (user) => {
   if (user.password) {
     consulta =
       "INSERT INTO usuarios(id,usuario, email, pass) VALUES ($1, $2, $3, $4);";
-    values = [maxId[0].max + 1, user.usuario, user.email, user.password];
+    const hashPass = hashPassword(user.password)
+    values = [maxId[0].max + 1, user.usuario, user.email, hashPass];
   } else {
     consulta = "INSERT INTO usuarios(id,usuario, email) VALUES ($1, $2, $3);";
     values = [maxId[0].max + 1, user.usuario, user.email];
@@ -173,7 +181,8 @@ const verifyUser = async (user) => {
         const { rows } = await conn.createConn().query(consulta, [user.email]);
         console.log("REVISION DE USUARIO");
         if( rows.length > 0){
-            if(user.password == rows[0].pass)
+            const match = await bcrypt.compare(user.password, rows[0].pass);
+            if(match)
                 {
                     return rows;
                 }else{
