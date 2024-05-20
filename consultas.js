@@ -157,6 +157,32 @@ const addUser = async (user) => {
   }
 };
 
+const addProduct = async (product) => {
+  let consulta;
+  let values;
+  maxId = await getId("productos");
+    consulta =
+      "INSERT INTO productos(id,nombreproducto, descripcion, imagenproducto, precio, categoria1, categoria2, categoria3, stock) VALUES ($1, $2, $3, $4, $5,$6,$7,$8,$9);";
+    values = [maxId[0].max + 1,
+              product.nombreproducto,
+              product.descripcion,
+              product.imagenproducto,
+              product.precio,
+              product.categoria1,
+              product.categoria2,
+              product.categoria3,
+              product.stock
+            ];
+  try {
+    await conn.createConn().query(consulta, values);
+    console.log("PRODUCTO AGREGADO");
+    return "Producto agregado exitosamente";
+  } catch (error) {
+    console.error("Error adding user:", error);
+    throw { code: 404, message: "Error al agregar el producto" };
+  }
+};
+
 const verifyUser = async (user) => {
   const consulta = "SELECT * FROM usuarios WHERE email = $1;";
   let resultado;
@@ -261,5 +287,6 @@ module.exports = {
     updateProfile, 
     getUserData, 
     handleCartData,
-    getCartItems
+    getCartItems,
+    addProduct
 }

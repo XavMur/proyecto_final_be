@@ -15,7 +15,8 @@ const {
     updateProfile, 
     getUserData,
     handleCartData,
-    getCartItems
+    getCartItems,
+    addProduct
 } = require('./consultas.js')
 app.listen(PORT, console.log("Servidor funcionando"));
 app.use(cors());
@@ -158,6 +159,21 @@ app.post("/getCartItems", async(req, res) =>{
     try{
         const datos = req.body;
         const response = await getCartItems(datos);
+        res.json(response);
+
+    }catch(error){
+        if (error.message) {
+            res.status(500).send(error.message);
+        } else {
+            res.status(500).send(`Error interno del servidor`);
+        }
+    }
+})
+
+app.post("/addProduct", async(req, res) =>{
+    try{
+        const datos = req.body;
+        const response = await addProduct(datos);
         res.json(response);
 
     }catch(error){
