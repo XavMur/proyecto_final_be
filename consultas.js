@@ -140,7 +140,7 @@ const addUser = async (user) => {
   if (user.password) {
     consulta =
       "INSERT INTO usuarios(id,usuario, email, pass) VALUES ($1, $2, $3, $4);";
-    const hashPass = hashPassword(user.password)
+    const hashPass = await hashPassword(user.password)
     values = [maxId[0].max + 1, user.usuario, user.email, hashPass];
   } else {
     consulta = "INSERT INTO usuarios(id,usuario, email) VALUES ($1, $2, $3);";
