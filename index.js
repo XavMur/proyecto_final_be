@@ -24,7 +24,11 @@ app.get("/productos", async (req, res) => {
         const productos = await productosPorCategoria(categorias);
         res.json(productos);
     }catch(error){
-        res.status(500).send(`Error interno del servidor, no se recibieron categorias`);
+        if (error.message) {
+            res.status(500).send(error.message);
+        } else {
+            res.status(500).send(`Error interno del servidor`);
+        }
     }
 });
 
@@ -33,7 +37,11 @@ app.get("/categorias", async (req, res) => {
         const categorias = await getCategorias();
         res.json(categorias);
     }catch(error){
-        res.status(500).send(`Error interno del servidor`);
+        if (error.message) {
+            res.status(500).send(error.message);
+        } else {
+            res.status(500).send(`Error interno del servidor`);
+        }
     }
 });
 
@@ -42,7 +50,11 @@ app.get("/tendencias", async (req, res) => {
         const tendencias = await getTendencias();
         res.json(tendencias);
     }catch(error){
-        res.status(500).send(`Error interno del servidor`);
+        if (error.message) {
+            res.status(500).send(error.message);
+        } else {
+            res.status(500).send(`Error interno del servidor`);
+        }
     }
 
 });
@@ -53,7 +65,11 @@ app.get("/producto", async (req, res) => {
         const producto = await getProduct(prodId);
         res.json(producto);
     }catch(error){
-        res.status(500).send(`Error interno del servidor`);
+        if (error.message) {
+            res.status(500).send(error.message);
+        } else {
+            res.status(500).send(`Error interno del servidor`);
+        }
     }
 
 });
@@ -83,7 +99,11 @@ app.post('/usuarioLogin2', async(req, res) =>{
             token: token
         });
     }catch(error){
-        res.status(500).send(`Error interno del servidor`);
+        if (error.message) {
+            res.status(500).send(error.message);
+        } else {
+            res.status(500).send(`Error interno del servidor`);
+        }
     }
 })
 
@@ -93,8 +113,12 @@ app.post("/profileUpdate", async (req, res) => {
     const producto = await updateProfile(datos);
     res.json(producto);
   }catch(error){
+    if (error.message) {
+        res.status(500).send(error.message);
+    } else {
         res.status(500).send(`Error interno del servidor`);
     }
+}
 });
 
 app.post("/getUserData", async(req, res) =>{
@@ -104,7 +128,11 @@ app.post("/getUserData", async(req, res) =>{
         const datosUsuario = await getUserData(datos);
         res.json(datosUsuario);
     }catch(error){
-        res.status(500).send(`Error interno del servidor`);
+        if (error.message) {
+            res.status(500).send(error.message);
+        } else {
+            res.status(500).send(`Error interno del servidor`);
+        }
     }
 })
 
@@ -115,7 +143,11 @@ app.post("/cartData", async(req, res) =>{
         res.json(response);
 
     }catch(error){
-        res.status(500).send(`Error interno del servidor`);
+        if (error.message) {
+            res.status(500).send(error.message);
+        } else {
+            res.status(500).send(`Error interno del servidor`);
+        }
     }
 })
 
@@ -126,6 +158,10 @@ app.post("/getCartItems", async(req, res) =>{
         res.json(response);
 
     }catch(error){
-        res.status(500).send(`Error interno del servidor`);
+        if (error.message) {
+            res.status(500).send(error.message);
+        } else {
+            res.status(500).send(`Error interno del servidor`);
+        }
     }
 })
