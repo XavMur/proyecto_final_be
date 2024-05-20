@@ -8,6 +8,7 @@ function dbConnection (){
         user: 'huella_master',
         password: 'TyyTnAqfEUiNa9MbQhdmicKsn9FlssAW',
         database: 'proyecto_final_db',
+        ssl: { rejectUnauthorized: false },
         allowExitOnIdle: true
     }
     return{
