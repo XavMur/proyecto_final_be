@@ -39,7 +39,7 @@ const productosPorCategoria = async (categorias) => {
     console.log("PETICION DE PRODUCTOS");
     return rows;
   } catch (error) {
-    throw { code: 404, message: "Error al obtener los productos" };
+    throw { code: 404, message: error };
   }
 };
 
