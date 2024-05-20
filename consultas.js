@@ -80,26 +80,40 @@ const getProduct = async (id) => {
   }
 };
 
-const updateProfile = async (datos, userId) => {
-  const consulta = `
-    UPDATE Usuarios
-    SET 
-      usuario = ${datos.name},
-      pais = ${datos.country},
-      ciudad = ${datos.city},
-      telefono = ${datos.phone},
-      email = ${datos.email},
-      nacimiento = ${datos.birthDate},
-      direccion = ${datos.address}
-    WHERE id = ${userId}`;
-
-  try {
-    const result = await db.query(consulta);
-    console.log("Profile updated successfully:", result);
-  } catch (error) {
-    console.error("Error updating profile:", error);
-  }
-};
+const updateProfile = async (datos) => {
+    const consulta = `
+      UPDATE Usuarios
+      SET 
+        usuario = $1,
+        pais = $2,
+        ciudad = $3,
+        telefono = $4,
+        email = $5,
+        nacimiento = $6,
+        direccion = $7
+      WHERE id = $8;`;
+  
+    const values = [
+      datos.usuario,
+      datos.pais,
+      datos.ciudad,
+      datos.telefono,
+      datos.email,
+      datos.nacimiento,
+      datos.direccion,
+      datos.id
+    ];
+  
+    try {
+      const { rows } = await conn.createConn().query(consulta, values);
+      console.log("ACTUALIZACION DE PERFIL");
+      return rows;
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      throw { code: 404, message: "Error al actualizar el perfil" };
+    }
+  };
+  
 
 const getId = async (tableName) => {
   const consulta = `SELECT MAX(id) FROM ${tableName};`;
@@ -153,10 +167,90 @@ const verifyUser = async (user) => {
   }
 };
 
+  const addUser2ndlogin = async(user) =>{
+    const consulta = "SELECT * FROM usuarios WHERE email = $1;";
+    try{
+        const { rows } = await conn.createConn().query(consulta, [user.email]);
+        console.log("REVISION DE USUARIO");
+        if( rows.length > 0){
+            if(user.password == rows[0].pass)
+                {
+                    return rows;
+                }else{
+                    return "Correo no valido";
+                }
+        }else{
+            return "No existe";
+        }
+    }catch (error) {
+        console.error('Error:', error);
+        throw { code: 404, message: "Error al verificar el usuario" };
+      }
+  }
+
+  const getUserData = async(email) =>{
+    consulta = "SELECT * FROM usuarios WHERE email = $1;";
+    try{
+        const { rows } = await conn.createConn().query(consulta, [email.email]);
+        return rows;
+        console.log("REVISION DE USUARIO");
+    }catch (error) {
+        console.error('Error:', error);
+        throw { code: 404, message: "Error al obtener datos" };
+      }
+  }
+
+  const handleCartData = async(cartData) =>{
+    const consulta = "SELECT * FROM carrito WHERE idUsuario = $1 AND idProducto = $2;";
+    const consultaAdd = "INSERT INTO carrito(id, idProducto, idusuario, cantidad) VALUES ($1,$2,$3,$4);"
+    const consultaEdit = "UPDATE carrito SET cantidad = $1 WHERE idUsuario = $2 AND idProducto = $3;"
+    try{
+        const {rows} = await conn.createConn().query(consulta,[cartData.idUsuario, cartData.idProducto]);
+        if(rows.length == 0){
+            const id = await getId("carrito");
+            try{
+                const {rows} = await conn.createConn().query(consultaAdd,[id[0].max + 1, cartData.idProducto, cartData.idUsuario, cartData.quantity]);
+                return "Datos agregados al carrito";
+            }catch (error) {
+                console.error('Error:', error);
+                throw { code: 404, message: "Error al agregar datos al carrito" };
+              }
+        }else{
+            try{
+                const {rows} = await conn.createConn().query(consultaEdit,[cartData.quantity, cartData.idUsuario, cartData.idProducto]);
+                return "Datos actualizados en el carrito";
+            }catch (error) {
+                console.error('Error:', error);
+                throw { code: 404, message: "Error al editar datos del carrito" };
+              }
+        }
+    }catch (error) {
+        console.error('Error:', error);
+        throw { code: 404, message: "Error al obtener datos del carrito" };
+      }
+  }
+
+  const getCartItems = async(idusuario) =>{
+    const consulta = "SELECT * FROM carrito WHERE idUsuario = $1;";
+    try{
+        const {rows} = await conn.createConn().query(consulta,[idusuario.idusuario]);
+        return rows
+        
+    }catch (error) {
+        console.error('Error:', error);
+        throw { code: 404, message: "Error al editar datos del carrito" };
+      }
+  }
+
 module.exports = {
-  productosPorCategoria,
-  getCategorias,
-  getTendencias,
-  getProduct,
-  verifyUser,
-};
+    productosPorCategoria, 
+    getCategorias, 
+    getTendencias, 
+    getProduct, 
+    verifyUser,
+    addUser2ndlogin,
+    updateProfile, 
+    getUserData, 
+    handleCartData,
+    getCartItems
+}
