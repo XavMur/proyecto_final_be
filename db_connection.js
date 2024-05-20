@@ -4,10 +4,10 @@ let connection;
 
 function dbConnection (){
     const connData = {
-        host: 'localhost',
-        user: 'postgres',
-        password: 'pgadmin',
-        database: 'proyecto_final',
+        host: 'dpg-cp5cv9q1hbls73fdbtpg-a',
+        user: 'huella_master',
+        password: 'OApu7AGkAoa9TjPc6Esn4r73Bad5BpwV',
+        database: 'proyecto_final_db',
         allowExitOnIdle: true
     }
     return{
