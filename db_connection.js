@@ -4,9 +4,9 @@ let connection;
 
 function dbConnection (){
     const connData = {
-        host: 'dpg-cp5cv9q1hbls73fdbtpg-a.oregon-postgres.render.com',
+        host: 'dpg-cp5dqmn79t8c73esj1dg-a.oregon-postgres.render.com',
         user: 'huella_master',
-        password: 'OApu7AGkAoa9TjPc6Esn4r73Bad5BpwV',
+        password: 'TyyTnAqfEUiNa9MbQhdmicKsn9FlssAW',
         database: 'proyecto_final_db',
         allowExitOnIdle: true
     }
