@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const jwt = require('jsonwebtoken')
+const PORT = process.env.PORT || 4000;
 
 
 const {
@@ -16,7 +17,7 @@ const {
     handleCartData,
     getCartItems
 } = require('./consultas.js')
-app.listen(3000, console.log("Servidor funcionando"));
+app.listen(PORT, console.log("Servidor funcionando"));
 app.use(cors());
 
 app.get("/productos", async (req, res) => {
@@ -25,11 +26,12 @@ app.get("/productos", async (req, res) => {
         const productos = await productosPorCategoria(categorias);
         res.json(productos);
     }catch(error){
-        if (error.message) {
-            res.status(500).send(error.message);
-        } else {
-            res.status(500).send(`Error interno del servidor`);
-        }
+        console.error('Error in /productos route:', error.stack || error);
+        res.status(error.code || 500).send({
+            message: error.message || 'Error interno del servidor',
+            // Include the stack trace only in development mode for security reasons
+            ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
+        });
     }
 });
 
