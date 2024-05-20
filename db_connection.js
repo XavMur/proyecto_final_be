@@ -7,7 +7,7 @@ function dbConnection (){
         host: 'dpg-cp5dqmn79t8c73esj1dg-a.oregon-postgres.render.com',
         user: 'huella_master',
         password: 'TyyTnAqfEUiNa9MbQhdmicKsn9FlssAW',
-        database: 'proyecto_final_db',
+        database: 'proyecto_final_be',
         ssl: { rejectUnauthorized: false },
         allowExitOnIdle: true
     }
