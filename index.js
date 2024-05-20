@@ -65,7 +65,11 @@ app.post('/usuarios', async(req, res)=>{
         const verificacion = await verifyUser(usuario);
         res.json(verificacion);
     }catch(error){
-        res.status(500).send(`Error interno del servidor`);
+        if (error.message) {
+            res.status(500).send(error.message);
+        } else {
+            res.status(500).send(`Error interno del servidor`);
+        }
     }
 })
 
